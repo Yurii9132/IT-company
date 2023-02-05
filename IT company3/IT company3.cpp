@@ -5,6 +5,7 @@
 #include <vector>
 #include <initializer_list>
 #include <algorithm>
+#include <memory>
 using std::string;
 using std::ostream;
 using std::istream;
@@ -12,6 +13,7 @@ using std::endl;
 using std::cout;
 using std::cin;
 using std::vector;
+using std::unique_ptr;
 
 
 struct DateOfBirth {
@@ -38,12 +40,12 @@ struct DateOfBirth {
         else if (this->yy > obj.yy) return false;
         else {
             if (this->mm < obj.mm) return true;
-            else if (this->mm > obj.mm) return false;          
+            else if (this->mm > obj.mm) return false;
             else {
                 if (this->dd < obj.dd) return true;
-                else  return false;                
+                else  return false;
             }
-        }      
+        }
     }
 };
 
@@ -242,6 +244,64 @@ public:
 
 
 
+class QA : virtual public Worker {
+protected:
+    std::vector<string> testTask;
+public:
+    QA() {}
+    QA(string name, DateOfBirth dateOfBirth,
+        string department, double salery, int weeklyHours,
+        std::vector<string> testTask) :
+        Worker(name, dateOfBirth, department, salery, weeklyHours)
+    {
+        this->testTask = testTask;
+
+    }
+    string get_firstTask() const {
+        return testTask[0];
+    }
+    virtual void Show() {
+        if (testTask.size() != 0) {
+            cout << "List of tasks: " << endl;
+            for (auto it = testTask.cbegin(); it != testTask.cend(); it++)
+            {
+                cout << *it << "\n";
+            }
+        }
+        else {
+            cout << "No tasks\n";
+        }
+    }
+    void QA_func() {
+        cout << "Hello from QA\n";
+    }
+    friend ostream& operator<<(ostream& out, const QA& obj) {
+        out << obj.name << "\t" << obj.dateOfBirth << endl;
+        out << obj.department << "\t" << obj.weeklyHours << "\t" << obj.salery << endl;
+        for (auto it = obj.testTask.cbegin(); it != obj.testTask.cend(); it++)
+        {
+            cout << *it << "\n";
+        }
+        return out;
+    }
+    bool operator == (const QA& obj) {
+        bool res = (this->name == obj.name &&
+            this->dateOfBirth == obj.dateOfBirth &&
+            this->department == obj.department &&
+            this->salery == obj.salery &&
+            this->testTask == obj.testTask);
+        return res;
+    }
+    void operator = (const QA& obj) {
+        this->name = obj.name;
+        this->dateOfBirth = obj.dateOfBirth;
+        this->department = obj.department;
+        this->salery = obj.salery;
+        this->weeklyHours = obj.weeklyHours;
+        this->testTask = obj.testTask;
+    }
+};
+
 
 
 class Programmer : virtual public Worker {
@@ -260,6 +320,32 @@ public:
         Worker("", DateOfBirth(1, 1, 1900), "", 0, 0)
     {
         quantityOfProjects = projects;
+    }
+    Programmer(const Programmer& prog) {
+        for (auto i = prog.quantityOfProjects.begin(); i != prog.quantityOfProjects.end(); i++) {
+            this->quantityOfProjects.push_back(*i);
+        }
+        //std::copy(prog.quantityOfProjects.begin(), prog.quantityOfProjects.end(), quantityOfProjects.begin());
+        name = prog.name;
+        dateOfBirth = prog.dateOfBirth;
+        department = prog.department;
+        salery = prog.salery;
+        weeklyHours = prog.weeklyHours;
+        cout << "CTOR copy\n";
+    }
+    Programmer(const Programmer&& prog) {
+        cout << "CTOR move\n";
+    }
+    ~Programmer() {
+        cout << name << " DTOR\n";
+    }
+    void interact(const QA& obj) {
+        quantityOfProjects.push_back(obj.get_firstTask());
+        cout << "interact &\n";
+    }
+    void interact(QA&& obj) {
+        quantityOfProjects.push_back(obj.get_firstTask());
+        cout << "interact &&\n";
     }
     virtual void show() {
         Worker::show();
@@ -320,60 +406,7 @@ public:
 
 
 
-class QA : virtual public Worker {
-protected:
-    std::vector<string> testTask;
-public:
-    QA() {}
-    QA(string name, DateOfBirth dateOfBirth,
-        string department, double salery, int weeklyHours,
-        std::vector<string> testTask) :
-        Worker(name, dateOfBirth, department, salery, weeklyHours)
-    {
-        this->testTask = testTask;
 
-    }
-    virtual void Show() {
-        if (testTask.size() != 0) {
-            cout << "List of tasks: " << endl;
-            for (auto it = testTask.cbegin(); it != testTask.cend(); it++)
-            {
-                cout << *it << "\n";
-            }
-        }
-        else {
-            cout << "No tasks\n";
-        }
-    }
-    void QA_func() {
-        cout << "Hello from QA\n";
-    }
-    friend ostream& operator<<(ostream& out, const QA& obj) {
-        out << obj.name << "\t" << obj.dateOfBirth << endl;
-        out << obj.department << "\t" << obj.weeklyHours << "\t" << obj.salery << endl;
-        for (auto it = obj.testTask.cbegin(); it != obj.testTask.cend(); it++)
-        {
-            cout << *it << "\n";
-        }
-        return out;
-    }
-    bool operator == (const QA& obj) {
-        bool res = (this->name == obj.name &&
-            this->dateOfBirth == obj.dateOfBirth &&
-            this->department == obj.department &&
-            this->salery == obj.salery &&
-            this->testTask == obj.testTask);
-        return res;
-    }
-    void operator = (const QA& obj) {
-        this->name = obj.name;
-        this->dateOfBirth = obj.dateOfBirth;
-        this->department = obj.department;
-        this->salery = obj.salery;
-        this->weeklyHours = obj.weeklyHours;
-        this->testTask = obj.testTask;
-    }
-};
 
 
 class Admin : virtual public Worker {
@@ -680,6 +713,7 @@ int main() {
     vector<string> arr1({ "t1","t2","t3","t4" });
     vector<string> arr2({ "1test","2test" });
 
+
     Programmer prog0("Yurii", DateOfBirth(1, 1, 1990), "Training and development", 1400, 40, arr0);
     Programmer prog1("Sergei", DateOfBirth(1, 1, 1991), "Health care", 1000, 40, arr1);
     Programmer prog2("Ivan", DateOfBirth(1, 1, 1992), "Promotion", 1400, 40, arr2);
@@ -687,19 +721,35 @@ int main() {
     Admin admin1("Yurii", DateOfBirth(12, 12, 1990), "Training and development", 444, 55, arr2);
     QA qa1("Sergei", DateOfBirth(2, 2, 1991), "Health care", 1400, 40, arr0);
 
-    IT_company comp;
+    cout << qa1.get_firstTask() << endl;
+
+    /*IT_company comp;
 
     comp.add_worker(&prog0);
     comp.add_worker(&prog1);
     comp.add_worker(&prog2);
     comp.add_worker(&admin1);
-    comp.add_worker(&qa1);
+    comp.add_worker(&qa1);*/
 
-    //comp.show_info();
+    Programmer prog3(Programmer("Yurii", DateOfBirth(1, 1, 1990), "Training and development", 1400, 40, arr1));
+    prog3.interact(qa1);
+    prog3.interact(QA("Sergei", DateOfBirth(2, 2, 1991), "Health care", 1400, 40, arr0));
+    prog3.show();
 
-   
+    vector<unique_ptr<Programmer>> ptr_progs;
 
-    cout << "Total company costs: " << comp.getTotalSaleries() << endl;
+    ptr_progs.push_back(unique_ptr<Programmer>(new Programmer("Peter", DateOfBirth(1, 1, 1990), "Training and development", 1400, 40, arr0)));
+    ptr_progs.push_back(unique_ptr<Programmer>(new Programmer("John", DateOfBirth(1, 1, 1991), "Health care", 1000, 40, arr1)));
+    ptr_progs.push_back(unique_ptr<Programmer>(new Programmer("Alex", DateOfBirth(1, 1, 1992), "Promotion", 1400, 40, arr2)));
+
+
+
+
+    /*comp.show_info();
+
+
+
+    //cout << "Total company costs: " << comp.getTotalSaleries() << endl;
 
     auto vec = comp.find_progs_salery(1400);
 

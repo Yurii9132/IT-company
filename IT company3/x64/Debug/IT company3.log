@@ -1,3 +1,2 @@
 ﻿  IT company3.cpp
-D:\Git-repository\IT-company\IT company3\IT company3.cpp(668): warning C4715: `IT_company::sortListWorkers'::`2'::<lambda_1>::operator(): значение возвращается не при всех путях выполнения
   IT company3.vcxproj -> D:\Git-repository\IT-company\x64\Debug\IT company3.exe
