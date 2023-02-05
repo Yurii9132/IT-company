@@ -795,22 +795,5 @@ int main() {
    ProgrammerAdmin obj0("Yurii", DateOfBirth(1, 1, 1993), "operator", 1900, 40, arr0, arr1);
    ProgrammerAdmin obj1("Sergei", DateOfBirth(1, 1, 1995), "operator", 2000, 40, arr1, arr2);
    ProgrammerAdmin obj2("Ivan", DateOfBirth(1, 1, 2007), "operator", 1000, 40, arr2, arr0);
-
-   Array<ProgrammerAdmin> obj({ obj0, obj1, obj2 });
-
-   //cout << obj << endl << "-------------------------------------------\n";
-
-   obj.erase(obj0);
-
-   //cout << obj << endl << "-------------------------------------------\n";
-
-   obj.insert(obj0);
-
-   //cout << obj << endl << "-------------------------------------------\n";
-
-   string name = "YuriiRuban";
-   string name1 = "YuriiRuban";
-   cout << name.size() << endl;
    */
-
 }
