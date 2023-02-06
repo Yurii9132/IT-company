@@ -777,7 +777,7 @@ int main() {
     for (auto it = progs.cbegin(); it != progs.cend(); it++)
     {
         cout << *it << "\n";
-        cout << "________________________________________________________\n";
+        
     }*/
 
     /*Manager obj0("Yurii", DateOfBirth(1, 1, 1990), "operator", 1400, 40, arr0);
