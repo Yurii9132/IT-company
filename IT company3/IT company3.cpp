@@ -667,7 +667,7 @@ public:
         //auto res = std::find_if(programmers.begin(), programmers.end(),
 
         for (auto i = programmers.begin(); i != programmers.end(); i++) {
-
+            
             if (i->get_salery() == salery) {
                 vec.push_back(std::pair<string, double>(i->get_name(), i->get_salery()));
             }
